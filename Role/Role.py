@@ -1,6 +1,6 @@
 from machine import Pin
 
-roleSelect = Pin(3, Pin.IN, Pin.PULL_UP)
+roleSelect = Pin(1, Pin.IN, Pin.PULL_UP)
 def pickRole():
     striker = False
     goalie = False
