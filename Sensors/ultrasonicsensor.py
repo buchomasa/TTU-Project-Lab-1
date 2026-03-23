@@ -63,7 +63,7 @@ while True:
     d2 = detectObject(2)
     
     print("Sensor1: ", d1, "cm")
-   # print("Sensor2: ", d2, "cm")
+    print("Sensor2: ", d2, "cm")
     
         
     
