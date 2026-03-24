@@ -1,13 +1,15 @@
 from machine import Pin, PWM
 from time import sleep
+import speedSensor
 
 in3 = Pin(14,Pin.OUT)
 in4 = Pin(15, Pin.OUT)
 in5 = Pin(12, Pin.OUT)
 in6 = Pin(13, Pin.OUT)
 
-
-enb = PWM(Pin(13))
+ena = PWM(Pin(13))
+ena.freq(1000)
+enb = PWM(Pin(14))
 enb.freq(1000)
 
 def motor_forward(speed):
@@ -41,7 +43,20 @@ def turn_left():
     in3.low()
     in4.low()
     in5.high()
-    in6.low
+    in6.low()
+
+def match_speeds(base_speed = 30000, Kp = 200):
+    left_rpm, right_rpm = speedSensor.measureSpeed()
+    error = left_rpm - right_rpm
+    
+    left_speed = base_speed - int(Kp * error)
+    right_speed = base_speed + int(Kp * error)
+    left_speed = max(0, min(65535, left_speed))
+    right_speed = max(0, min(65535, right_speed))
+    
+    ena.duty_u16(left_speed)
+    enb.duty_u16(right_speed)
+    return left_rpm, right_rpm
 
 try:
     while True:
