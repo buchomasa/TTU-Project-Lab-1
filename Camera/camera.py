@@ -1,4 +1,3 @@
-explain the most important parts of this code in a few bullet points 
 # -------------------------------
 # HM01B0 Blob Detection (Optimized)
 # -------------------------------
