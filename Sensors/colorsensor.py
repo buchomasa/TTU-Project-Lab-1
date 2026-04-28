@@ -4,7 +4,7 @@ Wiring:
 """
 from machine import I2C, Pin
 import time
-i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
+i2c = I2C(0, sda=Pin(20), scl=Pin(21), freq=400000)
 ADDR = 0x29
 def write(reg, val):
     i2c.writeto_mem(ADDR, 0x80 | reg, bytes([val]))
