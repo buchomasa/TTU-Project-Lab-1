@@ -1,0 +1,53 @@
+"""
+Red Ball Detection - TCS34725 on Pico 2
+Wiring:
+    VIN -> 3V3
+    GND -> GND
+    SDA -> GP0 (I2C0)
+    SCL -> GP1 (I2C0)
+    LED -> GND (keeps onboard LED on for consistent illumination)
+"""
+from machine import I2C, Pin
+import time
+
+_i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
+_ADDR = 0x29
+
+
+def _write(reg, val):
+    _i2c.writeto_mem(_ADDR, 0x80 | reg, bytes([val]))
+
+
+def _read16(reg):
+    d = _i2c.readfrom_mem(_ADDR, 0x80 | reg, 2)
+    return d[1] << 8 | d[0]
+
+
+def init_color_sensor():
+    """Call once at startup before using check_ball()."""
+    _write(0x00, 0x03)   # Power on + RGBC enable
+    _write(0x01, 0xC0)   # Integration time ~154ms
+    _write(0x0F, 0x01)   # Gain 4x
+    time.sleep_ms(200)
+
+
+def check_ball(debug=False):
+    """
+    Read the color sensor once and return:
+        "RED"     - red ball detected
+        "NOT RED" - a ball is present but not red (green/blue)
+        "NONE"    - no ball detected (box empty or too dark)
+    """
+    c = _read16(0x14)
+    r = _read16(0x16)
+    g = _read16(0x18)
+    b = _read16(0x1A)
+
+    if debug:
+        print("R={} G={} B={} C={}".format(r, g, b, c))
+
+    if c < 30 or g == 0 or b == 0:
+        return "NONE"
+    if (r / g) > 1.5 and (r / b) > 2.0:
+        return "RED"
+    return "NOT RED"
