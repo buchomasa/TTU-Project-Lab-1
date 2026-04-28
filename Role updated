@@ -1,0 +1,15 @@
+"""
+Role selection switch.
+Wired to GP22 with internal pull-up. Switch to GND for STRIKER, open for GOALIE.
+"""
+from machine import Pin
+
+_role_switch = Pin(22, Pin.IN, Pin.PULL_UP)
+
+
+def pick_role():
+    """Returns 'STRIKER' or 'GOALIE' based on switch position."""
+    if _role_switch.value() == 0:
+        return "STRIKER"
+    else:
+        return "GOALIE"
