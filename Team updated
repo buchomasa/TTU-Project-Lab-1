@@ -1,0 +1,15 @@
+"""
+Team color selection switch.
+Wired to GP21 with internal pull-up. Switch to GND for PURPLE, open for YELLOW.
+"""
+from machine import Pin
+
+_team_switch = Pin(21, Pin.IN, Pin.PULL_UP)
+
+
+def pick_team():
+    """Returns 'PURPLE' or 'YELLOW' based on switch position."""
+    if _team_switch.value() == 0:
+        return "PURPLE"
+    else:
+        return "YELLOW"
