@@ -1,16 +1,12 @@
 from machine import I2C, Pin
 import vl53l1x
 import time
-
-# ---- I2C & Sensor Setup ----
-i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=400000)
+i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
 tof = vl53l1x.VL53L1X(i2c)
 
-# ---- Detection Thresholds (in mm) ----
-# A 40mm ping pong ball will cause a sudden close reading
-OFFSET = 30 # offset distance for calibration
-BALL_DETECT_RANGE  = 150   # ball is within grabbing/kicking range
-BALL_APPROACH_RANGE = 400  # ball is ahead, rover should approach
+OFFSET = 30 
+BALL_DETECT_RANGE  = 150   
+BALL_APPROACH_RANGE = 400  
 
 def get_distance():
     """Returns distance in mm. Returns None if reading is invalid."""
@@ -20,12 +16,7 @@ def get_distance():
     return d
 
 def ball_status():
-    """
-    Returns one of three states:
-      'IN_RANGE'  - ball is close, ready to kick/grab
-      'APPROACH'  - ball detected ahead, keep driving toward it
-      'NONE'      - no ball detected in front of sensor
-    """
+
     d = get_distance()
     if d is None:
         return 'NONE'
@@ -36,7 +27,6 @@ def ball_status():
     else:
         return 'NONE'
 
-# ---- Main Loop (for testing) ----
 print("ToF ball detector ready\n")
 
 while True:
