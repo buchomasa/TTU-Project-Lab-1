@@ -1,17 +1,15 @@
 from machine import Pin
 
-roleSelect = Pin(1, Pin.IN, Pin.PULL_UP)
+roleSelect = Pin(8, Pin.IN, Pin.PULL_UP)
+
 def pickRole():
-    striker = False
-    goalie = False
     if roleSelect.value() == 0:
-        striker = True
-        goalie = False
         print("Striker")
-        
+        return "striker"
     else:
-        striker = False
-        goalie = True
         print("Goalie")
-        
-pickRole()
+        return "goalie"
+
+
+role = pickRole()
+print("Selected role:", role)
