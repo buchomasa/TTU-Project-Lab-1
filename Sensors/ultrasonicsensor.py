@@ -2,7 +2,6 @@ from time import sleep
 import time
 from machine import Pin, PWM
 
-# ---------------- SERVO SETUP ----------------
 pwm = PWM(Pin(0))
 pwm.freq(50)
 
@@ -10,12 +9,10 @@ def setServoCycle(position):
     pwm.duty_u16(position)
     sleep(0.01)
 
-# ---------------- SERVO LIMITS (REDUCED RANGE) ----------------
-# was: 1000 -> 8000 (full sweep)
-LEFT_LIMIT = 2500     # reduced left travel
-RIGHT_LIMIT = 6500    # reduced right travel
 
-# ---------------- ULTRASONIC SETUP ----------------
+LEFT_LIMIT = 2500     
+RIGHT_LIMIT = 6500    
+
 start1 = 0
 end1 = 0
 
@@ -43,22 +40,18 @@ def triggerSensor(trig):
     time.sleep_us(10)
     trig.low()
 
-# ---------------- PINS ----------------
 echo1 = Pin(2, Pin.IN)
 trig1 = Pin(3, Pin.OUT)
 
 echo1.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=echo_ISR)
 
-# ---------------- STATE ----------------
 tracking = False
 current_pos = LEFT_LIMIT
 step = 100
 direction = step
 
-# 12 inches ≈ 30 cm
 THRESHOLD_CM = 30
 
-# ---------------- MAIN LOOP ----------------
 while True:
 
     triggerSensor(trig1)
@@ -66,7 +59,6 @@ while True:
 
     distance = detectObject()
 
-    # ---------------- TRACKING MODE ----------------
     if distance is not None and distance <= THRESHOLD_CM:
         tracking = True
 
@@ -78,13 +70,12 @@ while True:
         if distance is None or distance > THRESHOLD_CM:
             tracking = False
 
-    # ---------------- SWEEP MODE ----------------
+
     else:
         setServoCycle(current_pos)
 
         current_pos += direction
 
-        # reverse at reduced limits
         if current_pos >= RIGHT_LIMIT:
             current_pos = RIGHT_LIMIT
             direction = -step
